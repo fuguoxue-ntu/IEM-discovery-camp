@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Shop - Your Store</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Header/Navigation -->
+    <header>
+        <div class="header-container">
+            <h1>🛍️ Simple Shop</h1>
+            <button class="cart-button" onclick="toggleCart()">
+                🛒 Cart (<span id="cart-count">0</span>)
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+        <!-- Product Display Section -->
+        <section class="products-section">
+            <h2>Featured Products</h2>
+            <div class="products-grid" id="products-container">
+                <!-- Products will be loaded here from PHP -->
+            </div>
+        </section>
+    </main>
+
+    <!-- Shopping Cart Sidebar -->
+    <aside id="cart-sidebar" class="cart-sidebar">
+        <div class="cart-header">
+            <h2>Shopping Cart</h2>
+            <button class="close-button" onclick="toggleCart()">✕</button>
+        </div>
+        <div class="cart-items" id="cart-items">
+            <p class="empty-cart">Your cart is empty</p>
+        </div>
+        <div class="cart-footer">
+            <div class="cart-total">
+                <strong>Total: $<span id="cart-total">0.00</span></strong>
+            </div>
+            <button class="checkout-button" onclick="checkout()">Checkout</button>
+        </div>
+    </aside>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2024 Simple Shop. All rights reserved.</p>
+    </footer>
+
+    <script src="js/cart.js"></script>
+    <script>
+        // Load products when page loads
+        window.addEventListener('DOMContentLoaded', function() {
+            loadProducts();
+        });
+
+        // Load products from PHP
+        function loadProducts() {
+            fetch('php/get_products.php')
+                .then(response => response.json())
+                .then(data => displayProducts(data))
+                .catch(error => console.error('Error:', error));
+        }
+
+        // Display products on page
+        function displayProducts(products) {
+            const container = document.getElementById('products-container');
+            container.innerHTML = '';
+
+            products.forEach(product => {
+                const productHTML = `
+                    <div class="product-card">
+                        <img src="${product.image}" alt="${product.name}" class="product-image">
+                        <h3>${product.name}</h3>
+                        <p class="product-description">${product.description}</p>
+                        <div class="product-footer">
+                            <span class="product-price">$${product.price}</span>
+                            <button class="add-to-cart-button" onclick="addToCart('${product.id}', '${product.name}', ${product.price})">
+                                Add to Cart
+                            </button>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += productHTML;
+            });
+        }
+    </script>
+</body>
+</html>
